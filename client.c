@@ -4,7 +4,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
-#include<arpa/inet.h>
+#include <arpa/inet.h>
 
 #define SERVER_IP "127.0.0.1"
 #define PORT 8888
@@ -14,7 +14,7 @@ int main() {
     int sockfd;
     struct sockaddr_in servaddr;
     char buffer[BUFFER_SIZE];
-    FILE file;
+    FILE *file; // Corrected declaration
 
     // Create socket
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -29,7 +29,7 @@ int main() {
     servaddr.sin_addr.s_addr = inet_addr(SERVER_IP);
 
     // Connect to server
-    if (connect(sockfd, (struct sockaddr)&servaddr, sizeof(servaddr)) < 0) {
+    if (connect(sockfd, (struct sockaddr*) &servaddr, sizeof(servaddr)) < 0) { // Corrected casting
         perror("Connection failed");
         exit(EXIT_FAILURE);
     }

@@ -12,7 +12,7 @@ int main() {
     int sockfd, connfd;
     struct sockaddr_in servaddr, cliaddr;
     char buffer[BUFFER_SIZE];
-    FILE file;
+    FILE *file; // Corrected declaration
 
     // Create socket
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -27,7 +27,7 @@ int main() {
     servaddr.sin_port = htons(PORT);
 
     // Bind socket
-    if (bind(sockfd, (struct sockaddr)&servaddr, sizeof(servaddr)) < 0) {
+    if (bind(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0) { // Corrected casting
         perror("Bind failed");
         exit(EXIT_FAILURE);
     }
