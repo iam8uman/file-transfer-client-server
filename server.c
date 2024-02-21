@@ -12,7 +12,7 @@ int main() {
     int sockfd, connfd;
     struct sockaddr_in servaddr, cliaddr;
     char buffer[BUFFER_SIZE];
-    FILE *file; // Corrected declaration
+    FILE *file;
 
     // Create socket
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -27,7 +27,7 @@ int main() {
     servaddr.sin_port = htons(PORT);
 
     // Bind socket
-    if (bind(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0) { // Corrected casting
+    if (bind(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0) {
         perror("Bind failed");
         exit(EXIT_FAILURE);
     }
@@ -53,14 +53,23 @@ int main() {
 
         // Receive file name
         recv(connfd, buffer, BUFFER_SIZE, 0);
-        file = fopen(buffer, "wb");
+
+        // Create "receive" directory if it doesn't exist
+        system("mkdir -p receive");
+
+        // Construct file path in the "receive" directory
+        char filepath[BUFFER_SIZE + 8];  // +8 for "/receive"
+        snprintf(filepath, sizeof(filepath), "receive/%s", buffer);
+
+        // Open file
+        file = fopen(filepath, "wb");
         if (file == NULL) {
             perror("Error opening file");
             close(connfd);
             continue;
         }
 
-        // Receive file content and write to file
+        // Receive and write file content
         while (1) {
             int bytes_received = recv(connfd, buffer, BUFFER_SIZE, 0);
             if (bytes_received <= 0) {
